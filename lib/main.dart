@@ -1352,7 +1352,7 @@ class _BookingPageState extends State<BookingPage> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                value: jamDipilih,
+                initialValue: jamDipilih,
                 decoration: const InputDecoration(
                   hintText: 'Pilih jam servis',
                   prefixIcon: Icon(Icons.access_time),
