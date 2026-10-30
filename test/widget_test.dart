@@ -1,30 +1,52 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:bintang_service/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  // Pengujian 1: Halaman Login
+  testWidgets(
+    'Halaman login Bintang Service berhasil ditampilkan',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(const BintangServiceApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(find.text('Selamat Datang'), findsOneWidget);
+      expect(find.text('Nama pelanggan'), findsOneWidget);
+      expect(find.text('Masuk'), findsOneWidget);
+    },
+  );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  // Pengujian 2: Halaman Beranda
+  testWidgets(
+    'Halaman beranda menampilkan informasi layanan',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: HomePage(namaPelanggan: 'Bintang'),
+        ),
+      );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+      expect(find.text('Servis Motor Anda di Sini.'), findsOneWidget);
+      expect(find.text('Layanan Bengkel'), findsOneWidget);
+      expect(find.text('Pilih Servis'), findsOneWidget);
+    },
+  );
+
+  // Pengujian 3: Halaman Pemilihan Layanan
+  testWidgets(
+    'Halaman pemilihan layanan menampilkan informasi utama',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ServiceSelectionPage(namaPelanggan: 'Bintang'),
+        ),
+      );
+
+      expect(find.text('Pilih Pekerjaan'), findsOneWidget);
+      expect(find.text('Apa yang ingin diservis?'), findsOneWidget);
+      expect(find.text('Pilihan Anda'), findsOneWidget);
+      expect(find.text('Total sementara'), findsOneWidget);
+      expect(find.text('Lanjut ke Booking'), findsOneWidget);
+    },
+  );
 }
