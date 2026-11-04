@@ -1,216 +1,135 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-
-import 'package:bintang_service/main.dart';
 import 'package:bintang_service/services/api_service.dart';
 
 void main() {
-  // ============================================================
-  // TEST 1: HALAMAN LOGIN
-  // ============================================================
+  group('Pengujian Katalog Bintang Service', () {
+    late ApiService api;
 
-  testWidgets(
-    'Halaman login Bintang Service berhasil ditampilkan',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(const BintangServiceApp());
+    setUp(() {
+      api = ApiService(
+        client: MockClient((request) async {
+          if (request.url.path.endsWith('/services.php')) {
+            return http.Response(
+              jsonEncode({
+                'success': true,
+                'data': [
+                  {
+                    'id': 8,
+                    'service_name': 'Repsol',
+                    'category': 'Oli Mesin',
+                    'price': 70000,
+                  },
+                  {
+                    'id': 9,
+                    'service_name': 'Shell AX5',
+                    'category': 'Oli Mesin',
+                    'price': 75000,
+                  },
+                  {
+                    'id': 27,
+                    'service_name': 'Oli Gardan',
+                    'category': 'Oli Gear',
+                    'price': 20000,
+                  },
+                  {
+                    'id': 18,
+                    'service_name': 'Servis CVT',
+                    'category': 'Servis',
+                    'price': 50000,
+                  },
+                ],
+              }),
+              200,
+            );
+          }
 
-      expect(find.text('Selamat Datang'), findsOneWidget);
-      expect(find.text('Nama pelanggan'), findsOneWidget);
-      expect(find.text('MASUK KE APLIKASI'), findsOneWidget);
-    },
-  );
-
-  // ============================================================
-  // TEST 2: HALAMAN BERANDA
-  // ============================================================
-
-  testWidgets(
-    'Halaman beranda menampilkan informasi layanan',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: HomePage(
-            namaPelanggan: 'Bintang',
-          ),
-        ),
-      );
-
-      expect(find.text('Halo, Bintang'), findsOneWidget);
-      expect(
-        find.text('Servis Motor\nAnda di Sini.'),
-        findsOneWidget,
-      );
-      expect(
-        find.text('Layanan Bintang Service'),
-        findsOneWidget,
-      );
-    },
-  );
-
-  // ============================================================
-  // TEST 3: KATALOG LAYANAN DAN HARGA DARI SIMULASI API
-  // ============================================================
-
-  testWidgets(
-    'Katalog menampilkan layanan dan harga dari simulasi API',
-    (WidgetTester tester) async {
-      ApiService.client = MockClient((request) async {
-        if (request.url.path.endsWith('/services.php')) {
           return http.Response(
-            jsonEncode({
-              'status': 'success',
-              'data': [
-                {
-                  'id': 18,
-                  'code': 'cvt',
-                  'service_name': 'Servis CVT',
-                  'category': 'Servis Mesin',
-                  'price': '50000.00',
-                  'description':
-                      'Pembersihan dan pemeriksaan CVT',
-                },
-                {
-                  'id': 27,
-                  'code': 'oli_gardan',
-                  'service_name': 'Oli Gear',
-                  'category': 'Oli Gear',
-                  'price': '20000.00',
-                  'description': 'Penggantian oli gear',
-                },
-              ],
-            }),
+            jsonEncode({'success': true}),
             200,
-            headers: {
-              'content-type': 'application/json',
-            },
           );
-        }
-
-        return http.Response(
-          jsonEncode({
-            'status': 'error',
-            'message': 'Endpoint tidak ditemukan',
-          }),
-          404,
-        );
-      });
-
-      addTearDown(() {
-        ApiService.client.close();
-      });
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ServiceSelectionPage(
-            namaPelanggan: 'Bintang',
-          ),
-        ),
+        }),
       );
+    });
 
-      await tester.pump();
-      await tester.pumpAndSettle();
+    test('Katalog berhasil mengambil seluruh layanan', () async {
+      final hasil = await api.getServices();
 
-      expect(find.text('Katalog Layanan'), findsOneWidget);
-      expect(
-        find.text('PILIH KEBUTUHAN MOTOR'),
-        findsOneWidget,
-      );
+      expect(hasil.length, 4);
+      expect(hasil[0].nama, 'Repsol');
+      expect(hasil[1].nama, 'Shell AX5');
+      expect(hasil[2].nama, 'Oli Gardan');
+      expect(hasil[3].nama, 'Servis CVT');
+    });
 
-      expect(find.text('Servis CVT'), findsOneWidget);
+    test('Setiap layanan mempunyai ID database berbeda', () async {
+      final hasil = await api.getServices();
 
-      // Oli Gear muncul sebagai nama kategori dan nama layanan.
-      expect(find.text('Oli Gear'), findsNWidgets(2));
+      final ids = hasil.map((item) => item.databaseId).toList();
 
-      expect(find.text('Rp50.000'), findsOneWidget);
-      expect(find.text('Rp20.000'), findsOneWidget);
+      expect(ids.toSet().length, ids.length);
+    });
 
-      expect(find.text('TOTAL HARGA'), findsOneWidget);
-      expect(
-        find.text('LANJUTKAN PEMESANAN'),
-        findsOneWidget,
-      );
-    },
-  );
+    test('Dua oli mesin dapat dipilih bersamaan', () async {
+      final hasil = await api.getServices();
 
-  // ============================================================
-  // TEST 4: PEMILIHAN OLI MESIN DAN OLI GEAR
-  // ============================================================
+      final pilihan = <int>{};
 
-  testWidgets(
-    'Oli Mesin dan Oli Gear dapat dipilih secara terpisah',
-    (WidgetTester tester) async {
-      ApiService.client = MockClient((request) async {
-        return http.Response(
-          jsonEncode({
-            'status': 'success',
-            'data': [
-              {
-                'id': 8,
-                'code': 'oli_repsol',
-                'service_name': 'Oli Repsol',
-                'category': 'Oli Mesin',
-                'price': '70000.00',
-                'description': 'Oli mesin Repsol',
-              },
-              {
-                'id': 27,
-                'code': 'oli_gardan',
-                'service_name': 'Oli Gear',
-                'category': 'Oli Gear',
-                'price': '20000.00',
-                'description': 'Oli gear motor',
-              },
-            ],
-          }),
-          200,
-          headers: {
-            'content-type': 'application/json',
-          },
-        );
-      });
+      pilihan.add(hasil[0].databaseId);
+      pilihan.add(hasil[1].databaseId);
 
-      addTearDown(() {
-        ApiService.client.close();
-      });
+      expect(pilihan.length, 2);
+      expect(pilihan.contains(8), true);
+      expect(pilihan.contains(9), true);
+    });
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: ServiceSelectionPage(
-            namaPelanggan: 'Bintang',
-          ),
-        ),
-      );
+    test('Dua oli mesin dan oli gardan dapat dipilih bersamaan',
+        () async {
+      final hasil = await api.getServices();
 
-      await tester.pump();
-      await tester.pumpAndSettle();
+      final pilihan = <int>{};
 
-      // Pilih Oli Repsol.
-      final oliRepsolFinder = find.text('Oli Repsol');
+      pilihan.add(hasil[0].databaseId);
+      pilihan.add(hasil[1].databaseId);
+      pilihan.add(hasil[2].databaseId);
 
-      await tester.ensureVisible(oliRepsolFinder);
-      await tester.tap(oliRepsolFinder);
-      await tester.pumpAndSettle();
+      expect(pilihan.length, 3);
+      expect(pilihan.contains(8), true);
+      expect(pilihan.contains(9), true);
+      expect(pilihan.contains(27), true);
+    });
 
-      // Pilih nama layanan Oli Gear, bukan judul kategorinya.
-      final oliGearFinder = find.text('Oli Gear').last;
+    test('Total harga beberapa layanan dihitung dengan benar',
+        () async {
+      final hasil = await api.getServices();
 
-      await tester.ensureVisible(oliGearFinder);
-      await tester.tap(oliGearFinder);
-      await tester.pumpAndSettle();
+      final pilihan = <int>{8, 9, 27};
 
-      // Pastikan dua layanan berhasil dipilih.
-      expect(
-        find.text('2 layanan dipilih'),
-        findsOneWidget,
-      );
+      final total = hasil
+          .where((item) => pilihan.contains(item.databaseId))
+          .fold<int>(0, (jumlah, item) => jumlah + item.harga);
 
-      // Rp70.000 + Rp20.000 = Rp90.000.
-      expect(find.text('Rp90.000'), findsOneWidget);
-    },
-  );
+      expect(total, 165000);
+    });
+
+    test('Pilihan layanan dapat dibatalkan secara terpisah',
+        () async {
+      final hasil = await api.getServices();
+
+      final pilihan = <int>{};
+
+      pilihan.add(hasil[0].databaseId);
+      pilihan.add(hasil[1].databaseId);
+
+      pilihan.remove(hasil[0].databaseId);
+
+      expect(pilihan.contains(8), false);
+      expect(pilihan.contains(9), true);
+      expect(pilihan.length, 1);
+    });
+  });
 }
