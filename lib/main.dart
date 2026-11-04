@@ -1,286 +1,42 @@
 
 import 'package:flutter/material.dart';
+import 'services/api_service.dart';
 
 void main() {
   runApp(const BintangServiceApp());
 }
 
 // ============================================================
-// WARNA DAN TEMA
+// TEMA
 // ============================================================
 
-const Color warnaLatar = Color(0xFF151515);
-const Color warnaKartu = Color(0xFF242424);
-const Color warnaEmas = Color(0xFFD8BD83);
-const Color warnaTeks = Color(0xFFF5F0E6);
-const Color warnaSekunder = Color(0xFFB8B1A5);
-const Color warnaGaris = Color(0xFF454545);
+const Color warnaLatar = Color(0xFF0B0B0B);
+const Color warnaKartu = Color(0xFF171717);
+const Color warnaKartu2 = Color(0xFF202020);
+const Color warnaEmas = Color(0xFFD6B36A);
+const Color warnaPutih = Color(0xFFF5F5F5);
+const Color warnaAbu = Color(0xFFAAAAAA);
+const Color warnaHijau = Color(0xFF55B879);
 
-// ============================================================
-// MODEL LAYANAN
-// ============================================================
+String formatRupiah(int angka) {
+  final text = angka.toString();
+  final buffer = StringBuffer();
 
-class ServiceItem {
-  final String id;
-  final String nama;
-  final String kategori;
-  final int harga;
-  final String keterangan;
+  for (int i = 0; i < text.length; i++) {
+    buffer.write(text[i]);
 
-  const ServiceItem({
-    required this.id,
-    required this.nama,
-    required this.kategori,
-    required this.harga,
-    this.keterangan = '',
-  });
-}
-
-// ============================================================
-// KATALOG OLI
-// Harga sesuai daftar yang diberikan pemilik Bintang Service.
-// ============================================================
-
-const List<ServiceItem> daftarOli = [
-  ServiceItem(
-    id: 'oli_repsol',
-    nama: 'Repsol',
-    kategori: 'Oli Mesin',
-    harga: 70000,
-  ),
-  ServiceItem(
-    id: 'oli_mpx2',
-    nama: 'AHM Oil MPX2',
-    kategori: 'Oli Mesin',
-    harga: 90000,
-  ),
-  ServiceItem(
-    id: 'oli_spx2',
-    nama: 'AHM Oil SPX2',
-    kategori: 'Oli Mesin',
-    harga: 105000,
-  ),
-  ServiceItem(
-    id: 'oli_ax5',
-    nama: 'Shell AX5',
-    kategori: 'Oli Mesin',
-    harga: 75000,
-  ),
-  ServiceItem(
-    id: 'oli_ax7',
-    nama: 'Shell AX7',
-    kategori: 'Oli Mesin',
-    harga: 85000,
-  ),
-  ServiceItem(
-    id: 'oli_yamalube_silver',
-    nama: 'Yamalube Silver',
-    kategori: 'Oli Mesin',
-    harga: 60000,
-  ),
-  ServiceItem(
-    id: 'oli_yamalube_matic',
-    nama: 'Yamalube Matic',
-    kategori: 'Oli Mesin',
-    harga: 65000,
-  ),
-  ServiceItem(
-    id: 'oli_yamalube_sport',
-    nama: 'Yamalube Sport',
-    kategori: 'Oli Mesin',
-    harga: 90000,
-  ),
-  ServiceItem(
-    id: 'oli_yamalube_super',
-    nama: 'Yamalube Super Matic',
-    kategori: 'Oli Mesin',
-    harga: 95000,
-  ),
-];
-
-// ============================================================
-// KATALOG JASA DAN PRODUK TAMBAHAN
-// ============================================================
-
-const List<ServiceItem> daftarLayanan = [
-  ServiceItem(
-    id: 'tb',
-    nama: 'Servis TB + Bersihkan Filter Udara',
-    kategori: 'Servis Injeksi',
-    harga: 50000,
-  ),
-  ServiceItem(
-    id: 'cvt',
-    nama: 'Servis CVT',
-    kategori: 'Servis Mesin',
-    harga: 50000,
-    keterangan: 'Harga servis tanpa penggantian barang.',
-  ),
-  ServiceItem(
-    id: 'shock',
-    nama: 'Servis Shock Depan Kiri dan Kanan',
-    kategori: 'Kaki-kaki',
-    harga: 130000,
-  ),
-  ServiceItem(
-    id: 'infus',
-    nama: 'Infus Injeksi',
-    kategori: 'Servis Injeksi',
-    harga: 30000,
-  ),
-  ServiceItem(
-    id: 'rotak',
-    nama: 'Ganti Rotak, Karet, dan Saringan Minyak',
-    kategori: 'Servis Injeksi',
-    harga: 200000,
-  ),
-  ServiceItem(
-    id: 'kampas_depan',
-    nama: 'Ganti Kampas Rem Depan',
-    kategori: 'Rem',
-    harga: 40000,
-  ),
-  ServiceItem(
-    id: 'kampas_belakang',
-    nama: 'Ganti Kampas Rem Belakang',
-    kategori: 'Rem',
-    harga: 65000,
-  ),
-  ServiceItem(
-    id: 'busi',
-    nama: 'Ganti Busi',
-    kategori: 'Mesin',
-    harga: 20000,
-  ),
-  ServiceItem(
-    id: 'komstir',
-    nama: 'Servis Komstir',
-    kategori: 'Kaki-kaki',
-    harga: 150000,
-  ),
-  ServiceItem(
-    id: 'bearing',
-    nama: 'Ganti Bearing Roda',
-    kategori: 'Roda',
-    harga: 60000,
-  ),
-  ServiceItem(
-    id: 'pasang_ban_depan',
-    nama: 'Jasa Pasang Ban Depan',
-    kategori: 'Ban',
-    harga: 20000,
-    keterangan: 'Harga jasa pemasangan saja.',
-  ),
-  ServiceItem(
-    id: 'pasang_ban_belakang',
-    nama: 'Jasa Pasang Ban Belakang',
-    kategori: 'Ban',
-    harga: 25000,
-    keterangan: 'Harga jasa pemasangan saja.',
-  ),
-  ServiceItem(
-    id: 'tambal_tubeless',
-    nama: 'Tambal Ban Tubeless',
-    kategori: 'Ban',
-    harga: 15000,
-  ),
-  ServiceItem(
-    id: 'aki',
-    nama: 'Ganti Aki',
-    kategori: 'Kelistrikan',
-    harga: 210000,
-  ),
-  ServiceItem(
-    id: 'oli_gardan',
-    nama: 'Ganti Oli Gardan',
-    kategori: 'Oli',
-    harga: 20000,
-  ),
-  ServiceItem(
-    id: 'celah_klep',
-    nama: 'Pemeriksaan Celah Klep',
-    kategori: 'Mesin',
-    harga: 30000,
-  ),
-  ServiceItem(
-    id: 'cairan_tubeless',
-    nama: 'Cairan Tubeless',
-    kategori: 'Produk',
-    harga: 35000,
-  ),
-  ServiceItem(
-    id: 'tambal_dalam',
-    nama: 'Tambal Ban Dalam',
-    kategori: 'Ban',
-    harga: 15000,
-  ),
-  ServiceItem(
-    id: 'ganti_dalam',
-    nama: 'Ganti Ban Dalam',
-    kategori: 'Ban',
-    harga: 45000,
-  ),
-  ServiceItem(
-    id: 'karburator',
-    nama: 'Servis Karburator',
-    kategori: 'Karburator',
-    harga: 45000,
-  ),
-  ServiceItem(
-    id: 'minyak_rem',
-    nama: 'Ganti Minyak Rem',
-    kategori: 'Rem',
-    harga: 10000,
-  ),
-  ServiceItem(
-    id: 'kaliper',
-    nama: 'Servis Kaliper Rem',
-    kategori: 'Rem',
-    harga: 40000,
-  ),
-  ServiceItem(
-    id: 'pentil',
-    nama: 'Ganti Pentil Ban',
-    kategori: 'Ban',
-    harga: 30000,
-  ),
-  ServiceItem(
-    id: 'ringan_karbu',
-    nama: 'Servis Ringan Motor Karburator',
-    kategori: 'Karburator',
-    harga: 35000,
-  ),
-  ServiceItem(
-    id: 'rantai',
-    nama: 'Setel Rantai Motor Bebek/Sport',
-    kategori: 'Rantai',
-    harga: 10000,
-  ),
-];
-
-// ============================================================
-// FORMAT RUPIAH
-// ============================================================
-
-String rupiah(int angka) {
-  final String nilai = angka.toString();
-  final StringBuffer hasil = StringBuffer();
-
-  for (int i = 0; i < nilai.length; i++) {
-    hasil.write(nilai[i]);
-
-    final int sisa = nilai.length - i - 1;
+    final sisa = text.length - i - 1;
 
     if (sisa > 0 && sisa % 3 == 0) {
-      hasil.write('.');
+      buffer.write('.');
     }
   }
 
-  return 'Rp$hasil';
+  return 'Rp${buffer.toString()}';
 }
 
 // ============================================================
-// APLIKASI UTAMA
+// APLIKASI
 // ============================================================
 
 class BintangServiceApp extends StatelessWidget {
@@ -292,37 +48,29 @@ class BintangServiceApp extends StatelessWidget {
       title: 'Bintang Service',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        useMaterial3: true,
         brightness: Brightness.dark,
         scaffoldBackgroundColor: warnaLatar,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: warnaEmas,
-          brightness: Brightness.dark,
+        colorScheme: const ColorScheme.dark(
           primary: warnaEmas,
+          secondary: warnaEmas,
           surface: warnaKartu,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: warnaLatar,
-          foregroundColor: warnaTeks,
-          elevation: 0,
-          centerTitle: false,
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: warnaKartu,
-          labelStyle: const TextStyle(color: warnaSekunder),
-          hintStyle: const TextStyle(color: warnaSekunder),
+          fillColor: warnaKartu2,
+          labelStyle: const TextStyle(color: warnaAbu),
+          hintStyle: const TextStyle(color: warnaAbu),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: warnaGaris),
+            borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: warnaGaris),
+            borderSide: const BorderSide(color: Colors.white12),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: warnaEmas, width: 1.5),
+            borderSide: const BorderSide(color: warnaEmas),
           ),
         ),
       ),
@@ -332,68 +80,17 @@ class BintangServiceApp extends StatelessWidget {
 }
 
 // ============================================================
-// WIDGET YANG DIGUNAKAN BERULANG
+// TOMBOL UTAMA
 // ============================================================
 
-class BrandHeader extends StatelessWidget {
-  const BrandHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: warnaEmas,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.build_circle_outlined,
-            color: warnaLatar,
-            size: 30,
-          ),
-        ),
-        const SizedBox(width: 12),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'BINTANG SERVICE',
-              style: TextStyle(
-                color: warnaTeks,
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.3,
-              ),
-            ),
-            SizedBox(height: 3),
-            Text(
-              'BENGKEL MOTOR',
-              style: TextStyle(
-                color: warnaEmas,
-                fontSize: 10,
-                letterSpacing: 2,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class PrimaryButton extends StatelessWidget {
+class TombolUtama extends StatelessWidget {
   final String teks;
   final VoidCallback? onPressed;
-  final IconData? ikon;
 
-  const PrimaryButton({
+  const TombolUtama({
     super.key,
     required this.teks,
     required this.onPressed,
-    this.ikon,
   });
 
   @override
@@ -401,20 +98,20 @@ class PrimaryButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: ElevatedButton.icon(
+      child: ElevatedButton(
         onPressed: onPressed,
-        icon: Icon(ikon ?? Icons.arrow_forward),
-        label: Text(
-          teks,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: warnaEmas,
-          foregroundColor: warnaLatar,
-          disabledBackgroundColor: warnaGaris,
-          disabledForegroundColor: warnaSekunder,
+          foregroundColor: Colors.black,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Text(
+          teks,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
           ),
         ),
       ),
@@ -422,46 +119,8 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-class SectionTitle extends StatelessWidget {
-  final String judul;
-  final String? subjudul;
-
-  const SectionTitle({
-    super.key,
-    required this.judul,
-    this.subjudul,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          judul,
-          style: const TextStyle(
-            color: warnaTeks,
-            fontSize: 19,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        if (subjudul != null) ...[
-          const SizedBox(height: 5),
-          Text(
-            subjudul!,
-            style: const TextStyle(
-              color: warnaSekunder,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
 // ============================================================
-// HALAMAN 1: LOGIN
+// LOGIN
 // ============================================================
 
 class LoginPage extends StatefulWidget {
@@ -472,21 +131,24 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController namaController = TextEditingController();
+  final namaController = TextEditingController();
+  final teleponController = TextEditingController();
 
   @override
   void dispose() {
     namaController.dispose();
+    teleponController.dispose();
     super.dispose();
   }
 
   void masuk() {
-    final String nama = namaController.text.trim();
+    final nama = namaController.text.trim();
+    final telepon = teleponController.text.trim();
 
-    if (nama.isEmpty) {
+    if (nama.isEmpty || telepon.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Silakan masukkan nama pelanggan.'),
+          content: Text('Nama dan nomor telepon harus diisi.'),
         ),
       );
       return;
@@ -495,7 +157,10 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => HomePage(namaPelanggan: nama),
+        builder: (_) => HomePage(
+          nama: nama,
+          telepon: telepon,
+        ),
       ),
     );
   }
@@ -503,67 +168,71 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const BrandHeader(),
-                  const SizedBox(height: 60),
-                  const Text(
-                    'Selamat Datang',
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 430),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Icon(
+                    Icons.two_wheeler,
+                    color: warnaEmas,
+                    size: 70,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Center(
+                  child: Text(
+                    'BINTANG SERVICE',
                     style: TextStyle(
-                      color: warnaTeks,
-                      fontSize: 32,
+                      color: warnaEmas,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Servis motor Anda dengan mudah di Bintang Service.',
-                    style: TextStyle(
-                      color: warnaSekunder,
-                      fontSize: 15,
-                    ),
+                ),
+                const SizedBox(height: 12),
+                const Center(
+                  child: Text(
+                    'Booking servis motor dengan mudah.',
+                    style: TextStyle(color: warnaAbu),
                   ),
-                  const SizedBox(height: 32),
-                  const Text(
-                    'Nama pelanggan',
-                    style: TextStyle(color: warnaTeks),
+                ),
+                const SizedBox(height: 40),
+                const Text(
+                  'Masuk Pelanggan',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: namaController,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      hintText: 'Masukkan nama Anda',
-                      prefixIcon: Icon(Icons.person_outline),
-                    ),
-                    onSubmitted: (_) => masuk(),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: namaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nama pelanggan',
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
-                  const SizedBox(height: 20),
-                  PrimaryButton(
-                    teks: 'Masuk',
-                    ikon: Icons.arrow_forward,
-                    onPressed: masuk,
+                ),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: teleponController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Nomor telepon',
+                    prefixIcon: Icon(Icons.phone_outlined),
                   ),
-                  const SizedBox(height: 28),
-                  const Center(
-                    child: Text(
-                      'BINTANG SERVICE',
-                      style: TextStyle(
-                        color: warnaEmas,
-                        letterSpacing: 3,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 25),
+                TombolUtama(
+                  teks: 'MASUK',
+                  onPressed: masuk,
+                ),
+              ],
             ),
           ),
         ),
@@ -573,117 +242,139 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 // ============================================================
-// HALAMAN 2: BERANDA
+// BERANDA
 // ============================================================
 
 class HomePage extends StatelessWidget {
-  final String namaPelanggan;
+  final String nama;
+  final String telepon;
 
   const HomePage({
     super.key,
-    required this.namaPelanggan,
+    required this.nama,
+    required this.telepon,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const BrandHeader(),
-        toolbarHeight: 75,
+        backgroundColor: warnaLatar,
+        title: const Text(
+          'BINTANG SERVICE',
+          style: TextStyle(
+            color: warnaEmas,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
-      body: SafeArea(
+      body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'Selamat datang, $namaPelanggan',
-                    style: const TextStyle(
-                      color: warnaEmas,
-                      fontSize: 14,
-                    ),
+          padding: const EdgeInsets.all(22),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Halo, $nama',
+                  style: const TextStyle(
+                    color: warnaAbu,
+                    fontSize: 15,
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Servis Motor Anda di Sini.',
-                    style: TextStyle(
-                      color: warnaTeks,
-                      fontSize: 34,
-                      height: 1.2,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'Servis Motor\nAnda di Sini.',
+                  style: TextStyle(
+                    color: warnaPutih,
+                    fontSize: 34,
+                    height: 1.25,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'Pilih pekerjaan yang Anda butuhkan. '
-                    'Anda bisa memilih beberapa layanan dalam satu booking.',
-                    style: TextStyle(
-                      color: warnaSekunder,
-                      fontSize: 15,
-                      height: 1.6,
-                    ),
+                ),
+                const SizedBox(height: 15),
+                const Text(
+                  'Pilih layanan perawatan motor dan tentukan jadwal servis Anda.',
+                  style: TextStyle(
+                    color: warnaAbu,
+                    fontSize: 15,
+                    height: 1.6,
                   ),
-                  const SizedBox(height: 30),
-                  const SectionTitle(
-                    judul: 'Layanan Bengkel',
-                    subjudul: 'Pilih pekerjaan sesuai kebutuhan motor Anda.',
+                ),
+                const SizedBox(height: 35),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: warnaKartu,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white12),
                   ),
-                  const SizedBox(height: 18),
-                  const ServiceCategoryCard(
-                    ikon: Icons.oil_barrel_outlined,
-                    judul: 'Oli dan Perawatan',
-                    deskripsi: 'Pilih oli mesin dan oli gardan.',
-                  ),
-                  const SizedBox(height: 12),
-                  const ServiceCategoryCard(
-                    ikon: Icons.settings_outlined,
-                    judul: 'Servis Mesin dan Injeksi',
-                    deskripsi: 'Servis TB, CVT, injeksi, dan karburator.',
-                  ),
-                  const SizedBox(height: 12),
-                  const ServiceCategoryCard(
-                    ikon: Icons.tire_repair_outlined,
-                    judul: 'Ban dan Kaki-kaki',
-                    deskripsi: 'Ban, bearing roda, komstir, dan shock.',
-                  ),
-                  const SizedBox(height: 12),
-                  const ServiceCategoryCard(
-                    ikon: Icons.shield_outlined,
-                    judul: 'Rem',
-                    deskripsi: 'Kampas rem, minyak rem, dan kaliper.',
-                  ),
-                  const SizedBox(height: 28),
-                  PrimaryButton(
-                    teks: 'Pilih Servis',
-                    ikon: Icons.checklist,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ServiceSelectionPage(
-                            namaPelanggan: namaPelanggan,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  const Center(
-                    child: Text(
-                      'Harga mengikuti katalog Bintang Service.',
-                      style: TextStyle(
-                        color: warnaSekunder,
-                        fontSize: 12,
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.build_circle_outlined,
+                        color: warnaEmas,
+                        size: 42,
                       ),
-                    ),
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Booking Servis',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              'Pilih beberapa layanan dalam satu pemesanan.',
+                              style: TextStyle(color: warnaAbu),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 22),
+                TombolUtama(
+                  teks: 'BUAT BOOKING',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ServiceSelectionPage(
+                          nama: nama,
+                          telepon: telepon,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                    foregroundColor: warnaEmas,
+                    side: const BorderSide(color: warnaEmas),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => RiwayatBookingPage(
+                          telepon: telepon,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('RIWAYAT BOOKING'),
+                ),
+              ],
             ),
           ),
         ),
@@ -692,69 +383,18 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class ServiceCategoryCard extends StatelessWidget {
-  final IconData ikon;
-  final String judul;
-  final String deskripsi;
-
-  const ServiceCategoryCard({
-    super.key,
-    required this.ikon,
-    required this.judul,
-    required this.deskripsi,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: warnaKartu,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: warnaGaris),
-      ),
-      child: Row(
-        children: [
-          Icon(ikon, color: warnaEmas, size: 30),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  judul,
-                  style: const TextStyle(
-                    color: warnaTeks,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  deskripsi,
-                  style: const TextStyle(
-                    color: warnaSekunder,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ============================================================
-// HALAMAN 3: PILIH LAYANAN
+// PEMILIHAN LAYANAN
 // ============================================================
 
 class ServiceSelectionPage extends StatefulWidget {
-  final String namaPelanggan;
+  final String nama;
+  final String telepon;
 
   const ServiceSelectionPage({
     super.key,
-    required this.namaPelanggan,
+    required this.nama,
+    required this.telepon,
   });
 
   @override
@@ -763,80 +403,115 @@ class ServiceSelectionPage extends StatefulWidget {
 }
 
 class _ServiceSelectionPageState extends State<ServiceSelectionPage> {
-  final Set<String> layananTerpilih = {};
-  String? oliTerpilih;
+  final ApiService api = ApiService();
 
-  int get totalHarga {
-    int total = 0;
+  List<ServiceItem> daftarLayanan = [];
+  final Set<int> layananTerpilih = {};
 
-    for (final layanan in daftarLayanan) {
-      if (layananTerpilih.contains(layanan.id)) {
-        total += layanan.harga;
-      }
-    }
+  bool sedangMemuat = true;
+  String? pesanError;
 
-    if (oliTerpilih != null) {
-      final oli = daftarOli.firstWhere(
-        (item) => item.id == oliTerpilih,
-      );
-      total += oli.harga;
-    }
-
-    return total;
+  @override
+  void initState() {
+    super.initState();
+    ambilLayanan();
   }
 
-  List<ServiceItem> get pilihanPelanggan {
-    final List<ServiceItem> hasil = [];
+  Future<void> ambilLayanan() async {
+    setState(() {
+      sedangMemuat = true;
+      pesanError = null;
+    });
 
-    for (final layanan in daftarLayanan) {
-      if (layananTerpilih.contains(layanan.id)) {
-        hasil.add(layanan);
-      }
+    try {
+      final hasil = await api.getServices();
+
+      if (!mounted) return;
+
+      setState(() {
+        daftarLayanan = hasil;
+        sedangMemuat = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        pesanError = e.toString().replaceFirst('Exception: ', '');
+        sedangMemuat = false;
+      });
     }
+  }
 
-    if (oliTerpilih != null) {
-      hasil.add(
-        daftarOli.firstWhere(
-          (item) => item.id == oliTerpilih,
-        ),
-      );
+  // ==========================================================
+  // ATURAN PEMILIHAN LAYANAN
+  // ==========================================================
+
+  // Hanya satu produk Oli Mesin yang boleh dipilih.
+  // Oli Gear dan layanan lainnya tetap bisa dipilih bersamaan.
+  void pilihLayanan(ServiceItem item) {
+    setState(() {
+      // Jika layanan sudah dipilih, batalkan pilihan.
+      if (layananTerpilih.contains(item.databaseId)) {
+        layananTerpilih.remove(item.databaseId);
+        return;
+      }
+
+      final kategori = item.kategori.trim().toLowerCase();
+
+      // Jika memilih Oli Mesin baru, batalkan Oli Mesin sebelumnya.
+      if (kategori == 'oli mesin') {
+        for (final layanan in daftarLayanan) {
+          if (layanan.kategori.trim().toLowerCase() == 'oli mesin') {
+            layananTerpilih.remove(layanan.databaseId);
+          }
+        }
+      }
+
+      // Tambahkan layanan yang baru dipilih.
+      layananTerpilih.add(item.databaseId);
+    });
+  }
+
+  List<ServiceItem> get pilihanLayanan {
+    return daftarLayanan
+        .where((item) => layananTerpilih.contains(item.databaseId))
+        .toList();
+  }
+
+  int get totalHarga {
+    return pilihanLayanan.fold(
+      0,
+      (total, item) => total + item.harga,
+    );
+  }
+
+  Map<String, List<ServiceItem>> get kelompokLayanan {
+    final Map<String, List<ServiceItem>> hasil = {};
+
+    for (final item in daftarLayanan) {
+      hasil.putIfAbsent(item.kategori, () => []);
+      hasil[item.kategori]!.add(item);
     }
 
     return hasil;
   }
 
-  Widget buatJudulKategori(String judul, String deskripsi) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 12),
-      child: SectionTitle(
-        judul: judul,
-        subjudul: deskripsi,
-      ),
-    );
-  }
-
-  Widget buatKartuLayanan(ServiceItem item) {
-    final bool dipilih = layananTerpilih.contains(item.id);
+  Widget kartuLayanan(ServiceItem item) {
+    final dipilih = layananTerpilih.contains(item.databaseId);
 
     return InkWell(
-      onTap: () {
-        setState(() {
-          if (dipilih) {
-            layananTerpilih.remove(item.id);
-          } else {
-            layananTerpilih.add(item.id);
-          }
-        });
-      },
-      borderRadius: BorderRadius.circular(12),
+      key: ValueKey('layanan_${item.databaseId}'),
+      onTap: () => pilihLayanan(item),
+      borderRadius: BorderRadius.circular(13),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: dipilih ? const Color(0xFF302B20) : warnaKartu,
-          borderRadius: BorderRadius.circular(12),
+          color: dipilih ? const Color(0xFF302719) : warnaKartu,
+          borderRadius: BorderRadius.circular(13),
           border: Border.all(
-            color: dipilih ? warnaEmas : warnaGaris,
+            color: dipilih ? warnaEmas : Colors.white12,
+            width: dipilih ? 1.5 : 1,
           ),
         ),
         child: Row(
@@ -844,9 +519,8 @@ class _ServiceSelectionPageState extends State<ServiceSelectionPage> {
             Icon(
               dipilih
                   ? Icons.check_circle
-                  : Icons.radio_button_unchecked,
-              color: dipilih ? warnaEmas : warnaSekunder,
-              size: 25,
+                  : Icons.circle_outlined,
+              color: dipilih ? warnaEmas : warnaAbu,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -856,77 +530,26 @@ class _ServiceSelectionPageState extends State<ServiceSelectionPage> {
                   Text(
                     item.nama,
                     style: const TextStyle(
-                      color: warnaTeks,
                       fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
                   ),
-                  if (item.keterangan.isNotEmpty) ...[
-                    const SizedBox(height: 5),
+                  if (item.deskripsi.isNotEmpty) ...[
+                    const SizedBox(height: 4),
                     Text(
-                      item.keterangan,
+                      item.deskripsi,
                       style: const TextStyle(
-                        color: warnaSekunder,
-                        fontSize: 11,
+                        color: warnaAbu,
+                        fontSize: 12,
                       ),
                     ),
                   ],
-                  const SizedBox(height: 6),
-                  Text(
-                    rupiah(item.harga),
-                    style: const TextStyle(
-                      color: warnaEmas,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buatKartuOli(ServiceItem oli) {
-    final bool dipilih = oliTerpilih == oli.id;
-
-    return InkWell(
-      onTap: () {
-        setState(() {
-          oliTerpilih = dipilih ? null : oli.id;
-        });
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: dipilih ? const Color(0xFF302B20) : warnaKartu,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: dipilih ? warnaEmas : warnaGaris,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              dipilih
-                  ? Icons.radio_button_checked
-                  : Icons.radio_button_off,
-              color: dipilih ? warnaEmas : warnaSekunder,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                oli.nama,
-                style: const TextStyle(
-                  color: warnaTeks,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+            const SizedBox(width: 8),
             Text(
-              rupiah(oli.harga),
+              formatRupiah(item.harga),
               style: const TextStyle(
                 color: warnaEmas,
                 fontWeight: FontWeight.bold,
@@ -938,201 +561,164 @@ class _ServiceSelectionPageState extends State<ServiceSelectionPage> {
     );
   }
 
-  void lanjutBooking() {
-    if (pilihanPelanggan.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pilih minimal satu pekerjaan atau produk.'),
-        ),
-      );
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BookingPage(
-          namaPelanggan: widget.namaPelanggan,
-          pilihan: pilihanPelanggan,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pilih Pekerjaan'),
+        title: const Text('Pilih Layanan'),
+        backgroundColor: warnaLatar,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
-                children: [
-                  const Text(
-                    'Apa yang ingin diservis?',
-                    style: TextStyle(
-                      color: warnaTeks,
-                      fontSize: 27,
-                      fontWeight: FontWeight.bold,
+      body: sedangMemuat
+          ? const Center(
+              child: CircularProgressIndicator(color: warnaEmas),
+            )
+          : pesanError != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(22),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.redAccent,
+                          size: 45,
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          pesanError!,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 18),
+                        TombolUtama(
+                          teks: 'COBA LAGI',
+                          onPressed: ambilLayanan,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Centang semua pekerjaan yang dibutuhkan. '
-                    'Untuk oli mesin, pilih satu merek.',
-                    style: TextStyle(
-                      color: warnaSekunder,
-                      height: 1.5,
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: daftarLayanan.isEmpty
+                          ? const Center(
+                              child: Text('Katalog layanan masih kosong.'),
+                            )
+                          : ListView(
+                              padding: const EdgeInsets.all(18),
+                              children: [
+                                const Text(
+                                  'Pilih layanan yang dibutuhkan',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                const Text(
+                                  'Anda dapat memilih beberapa layanan, tetapi hanya satu merek Oli Mesin dalam satu pemesanan.',
+                                  style: TextStyle(
+                                    color: warnaAbu,
+                                    height: 1.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                ...kelompokLayanan.entries.map((kelompok) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          top: 12,
+                                          bottom: 12,
+                                        ),
+                                        child: Text(
+                                          kelompok.key,
+                                          style: const TextStyle(
+                                            color: warnaEmas,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      ...kelompok.value.map(kartuLayanan),
+                                    ],
+                                  );
+                                }),
+                              ],
+                            ),
                     ),
-                  ),
-
-                  buatJudulKategori(
-                    'Oli Mesin',
-                    'Jasa ganti oli mesin gratis. Pilih satu jenis oli.',
-                  ),
-                  ...daftarOli.map(buatKartuOli),
-
-                  buatJudulKategori(
-                    'Servis Mesin dan Injeksi',
-                    'Pilih satu atau beberapa pekerjaan.',
-                  ),
-                  ...daftarLayanan
-                      .where(
-                        (item) =>
-                            item.kategori == 'Servis Mesin' ||
-                            item.kategori == 'Servis Injeksi' ||
-                            item.kategori == 'Mesin' ||
-                            item.kategori == 'Karburator',
-                      )
-                      .map(buatKartuLayanan),
-
-                  buatJudulKategori(
-                    'Rem',
-                    'Pekerjaan pada sistem pengereman.',
-                  ),
-                  ...daftarLayanan
-                      .where((item) => item.kategori == 'Rem')
-                      .map(buatKartuLayanan),
-
-                  buatJudulKategori(
-                    'Ban dan Roda',
-                    'Ban tidak dijual oleh Bintang Service. '
-                    'Harga pemasangan merupakan jasa.',
-                  ),
-                  ...daftarLayanan
-                      .where(
-                        (item) =>
-                            item.kategori == 'Ban' ||
-                            item.kategori == 'Roda',
-                      )
-                      .map(buatKartuLayanan),
-
-                  buatJudulKategori(
-                    'Kaki-kaki dan Layanan Lain',
-                    'Pilih pekerjaan tambahan jika diperlukan.',
-                  ),
-                  ...daftarLayanan
-                      .where(
-                        (item) =>
-                            item.kategori == 'Kaki-kaki' ||
-                            item.kategori == 'Oli' ||
-                            item.kategori == 'Produk' ||
-                            item.kategori == 'Rantai',
-                      )
-                      .map(buatKartuLayanan),
-                ],
-              ),
-            ),
-
-            Container(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
-              decoration: const BoxDecoration(
-                color: warnaKartu,
-                border: Border(
-                  top: BorderSide(color: warnaGaris),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Pilihan Anda',
-                              style: TextStyle(
-                                color: warnaSekunder,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${pilihanPelanggan.length} item dipilih',
-                              style: const TextStyle(
-                                color: warnaTeks,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: const BoxDecoration(
+                        color: warnaKartu,
+                        border: Border(
+                          top: BorderSide(color: Colors.white12),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      child: Column(
                         children: [
-                          const Text(
-                            'Total sementara',
-                            style: TextStyle(
-                              color: warnaSekunder,
-                              fontSize: 12,
-                            ),
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${layananTerpilih.length} layanan dipilih',
+                                style: const TextStyle(color: warnaAbu),
+                              ),
+                              Text(
+                                formatRupiah(totalHarga),
+                                style: const TextStyle(
+                                  color: warnaEmas,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            rupiah(totalHarga),
-                            style: const TextStyle(
-                              color: warnaEmas,
-                              fontSize: 21,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          const SizedBox(height: 13),
+                          TombolUtama(
+                            teks: 'LANJUTKAN PEMESANAN',
+                            onPressed: layananTerpilih.isEmpty
+                                ? null
+                                : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BookingPage(
+                                          nama: widget.nama,
+                                          telepon: widget.telepon,
+                                          layanan: pilihanLayanan,
+                                        ),
+                                      ),
+                                    );
+                                  },
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  PrimaryButton(
-                    teks: 'Lanjut ke Booking',
-                    ikon: Icons.calendar_month,
-                    onPressed: lanjutBooking,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+                    ),
+                  ],
+                ),
     );
   }
 }
 
 // ============================================================
-// HALAMAN 4: FORM BOOKING
+// FORM BOOKING
 // ============================================================
 
 class BookingPage extends StatefulWidget {
-  final String namaPelanggan;
-  final List<ServiceItem> pilihan;
+  final String nama;
+  final String telepon;
+  final List<ServiceItem> layanan;
 
   const BookingPage({
     super.key,
-    required this.namaPelanggan,
-    required this.pilihan,
+    required this.nama,
+    required this.telepon,
+    required this.layanan,
   });
 
   @override
@@ -1140,614 +726,766 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
-  final _formKey = GlobalKey<FormState>();
+  final ApiService api = ApiService();
 
-  late final TextEditingController namaController;
-  final TextEditingController motorController = TextEditingController();
-  final TextEditingController catatanController = TextEditingController();
+  final motorController = TextEditingController();
+  final nomorPolisiController = TextEditingController();
 
   DateTime? tanggalDipilih;
-  String? jamDipilih;
+  TimeOfDay? jamDipilih;
 
-  final List<String> pilihanJam = const [
-    '09.00',
-    '10.00',
-    '11.00',
-    '13.00',
-    '14.00',
-    '15.00',
-    '16.00',
-  ];
+  bool sedangMenyimpan = false;
 
   int get totalHarga {
-    return widget.pilihan.fold(
+    return widget.layanan.fold(
       0,
       (total, item) => total + item.harga,
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    namaController = TextEditingController(
-      text: widget.namaPelanggan,
     );
   }
 
   @override
   void dispose() {
-    namaController.dispose();
     motorController.dispose();
-    catatanController.dispose();
+    nomorPolisiController.dispose();
     super.dispose();
   }
 
   Future<void> pilihTanggal() async {
-    final DateTime sekarang = DateTime.now();
-
-    final DateTime? hasil = await showDatePicker(
+    final tanggal = await showDatePicker(
       context: context,
-      initialDate: tanggalDipilih ?? sekarang,
-      firstDate: DateTime(
-        sekarang.year,
-        sekarang.month,
-        sekarang.day,
-      ),
-      lastDate: DateTime.now().add(
-        const Duration(days: 90),
-      ),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: warnaEmas,
-              onPrimary: warnaLatar,
-              surface: warnaKartu,
-              onSurface: warnaTeks,
-            ),
-          ),
-          child: child!,
-        );
-      },
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 90)),
     );
 
-    if (hasil != null && mounted) {
+    if (tanggal != null) {
       setState(() {
-        tanggalDipilih = hasil;
+        tanggalDipilih = tanggal;
       });
     }
   }
 
-  String tanggalIndonesia(DateTime tanggal) {
-    const List<String> namaBulan = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
+  Future<void> pilihJam() async {
+    final jam = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 9, minute: 0),
+    );
 
-    return '${tanggal.day} ${namaBulan[tanggal.month - 1]} '
-        '${tanggal.year}';
+    if (jam != null) {
+      setState(() {
+        jamDipilih = jam;
+      });
+    }
   }
 
-  void konfirmasiBooking() {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
 
-    if (tanggalDipilih == null || jamDipilih == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Pilih tanggal dan jam booking.'),
+Future<void> simpanBooking() async {
+  if (motorController.text.trim().isEmpty ||
+      nomorPolisiController.text.trim().isEmpty ||
+      tanggalDipilih == null ||
+      jamDipilih == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Lengkapi semua data pemesanan terlebih dahulu.',
         ),
-      );
-      return;
-    }
+      ),
+    );
+    return;
+  }
 
-    Navigator.pushReplacement(
+  setState(() {
+    sedangMenyimpan = true;
+  });
+
+  try {
+    final tanggal =
+        '${tanggalDipilih!.year.toString().padLeft(4, '0')}-'
+        '${tanggalDipilih!.month.toString().padLeft(2, '0')}-'
+        '${tanggalDipilih!.day.toString().padLeft(2, '0')}';
+
+    final jam =
+        '${jamDipilih!.hour.toString().padLeft(2, '0')}:'
+        '${jamDipilih!.minute.toString().padLeft(2, '0')}';
+
+    final hasil = await api.createBooking(
+      name: widget.nama,
+      phone: widget.telepon,
+      bookingDate: tanggal,
+      bookingTime: jam,
+      motorcycleType: motorController.text.trim(),
+      motorcycleNumber: nomorPolisiController.text.trim(),
+      serviceIds: widget.layanan
+          .map((item) => item.databaseId)
+          .toSet()
+          .toList(),
+    );
+
+    if (!mounted) return;
+
+    final nomorBooking = (
+      hasil['booking_id'] ??
+      hasil['bookingId'] ??
+      hasil['id_booking'] ??
+      hasil['id'] ??
+      '-'
+    ).toString();
+
+    Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
         builder: (_) => SuccessPage(
-          namaPelanggan: namaController.text.trim(),
+          nama: widget.nama,
+          telepon: widget.telepon,
+          total: totalHarga,
+          bookingId: nomorBooking,
           jenisMotor: motorController.text.trim(),
-          tanggal: tanggalIndonesia(tanggalDipilih!),
-          jam: jamDipilih!,
-          catatan: catatanController.text.trim(),
-          pilihan: widget.pilihan,
+          nomorPolisi: nomorPolisiController.text.trim(),
+          tanggal: tanggal,
+          jam: jam,
+          layanan: List<ServiceItem>.from(widget.layanan),
+        ),
+      ),
+      (route) => route.isFirst,
+    );
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          e.toString().replaceFirst('Exception: ', ''),
         ),
       ),
     );
+  } finally {
+    if (mounted) {
+      setState(() {
+        sedangMenyimpan = false;
+      });
+    }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Form Booking'),
+        title: const Text('Data Pemesanan'),
+        backgroundColor: warnaLatar,
       ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              const SectionTitle(
-                judul: 'Data Booking',
-                subjudul: 'Lengkapi data untuk melanjutkan pemesanan.',
-              ),
-              const SizedBox(height: 22),
-
-              const Text(
-                'Nama pelanggan',
-                style: TextStyle(color: warnaTeks),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: namaController,
-                decoration: const InputDecoration(
-                  hintText: 'Nama pelanggan',
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Nama wajib diisi.';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 18),
-              const Text(
-                'Jenis motor',
-                style: TextStyle(color: warnaTeks),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: motorController,
-                decoration: const InputDecoration(
-                  hintText: 'Contoh: Honda Beat 2024',
-                  prefixIcon: Icon(Icons.two_wheeler),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Jenis motor wajib diisi.';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 18),
-              const Text(
-                'Tanggal servis',
-                style: TextStyle(color: warnaTeks),
-              ),
-              const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: pilihTanggal,
-                icon: const Icon(Icons.calendar_month),
-                label: Text(
-                  tanggalDipilih == null
-                      ? 'Pilih tanggal'
-                      : tanggalIndonesia(tanggalDipilih!),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: warnaEmas,
-                  minimumSize: const Size.fromHeight(50),
-                  side: const BorderSide(color: warnaGaris),
-                ),
-              ),
-
-              const SizedBox(height: 18),
-              const Text(
-                'Jam servis',
-                style: TextStyle(color: warnaTeks),
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: jamDipilih,
-                decoration: const InputDecoration(
-                  hintText: 'Pilih jam servis',
-                  prefixIcon: Icon(Icons.access_time),
-                ),
-                items: pilihanJam.map((jam) {
-                  return DropdownMenuItem(
-                    value: jam,
-                    child: Text('$jam WIB'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    jamDipilih = value;
-                  });
-                },
-              ),
-
-              const SizedBox(height: 18),
-              const Text(
-                'Catatan tambahan (opsional)',
-                style: TextStyle(color: warnaTeks),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: catatanController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: 'Keluhan atau catatan untuk mekanik',
-                  alignLabelWithHint: true,
-                ),
-              ),
-
-              const SizedBox(height: 26),
-              const SectionTitle(
-                judul: 'Ringkasan Pekerjaan',
-              ),
-              const SizedBox(height: 12),
-
-              Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: warnaKartu,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: warnaGaris),
-                ),
-                child: Column(
-                  children: [
-                    ...widget.pilihan.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item.nama,
-                                style: const TextStyle(
-                                  color: warnaTeks,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              rupiah(item.harga),
-                              style: const TextStyle(
-                                color: warnaEmas,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Divider(color: warnaGaris),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'TOTAL',
-                            style: TextStyle(
-                              color: warnaTeks,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          rupiah(totalHarga),
-                          style: const TextStyle(
-                            color: warnaEmas,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-              PrimaryButton(
-                teks: 'Konfirmasi Booking',
-                ikon: Icons.check_circle_outline,
-                onPressed: konfirmasiBooking,
-              ),
-              const SizedBox(height: 18),
-            ],
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            'Data Pelanggan',
+            style: TextStyle(
+              color: warnaEmas,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
-        ),
+          const SizedBox(height: 12),
+          _barisData('Nama', widget.nama),
+          _barisData('Nomor telepon', widget.telepon),
+          const SizedBox(height: 25),
+          const Text(
+            'Data Kendaraan',
+            style: TextStyle(
+              color: warnaEmas,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: motorController,
+            decoration: const InputDecoration(
+              labelText: 'Jenis / tipe motor',
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: nomorPolisiController,
+            textCapitalization: TextCapitalization.characters,
+            decoration: const InputDecoration(
+              labelText: 'Nomor polisi',
+            ),
+          ),
+          const SizedBox(height: 25),
+          const Text(
+            'Jadwal Servis',
+            style: TextStyle(
+              color: warnaEmas,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: pilihTanggal,
+            icon: const Icon(Icons.calendar_month),
+            label: Text(
+              tanggalDipilih == null
+                  ? 'Pilih tanggal servis'
+                  : '${tanggalDipilih!.day}-'
+                      '${tanggalDipilih!.month}-'
+                      '${tanggalDipilih!.year}',
+            ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: pilihJam,
+            icon: const Icon(Icons.access_time),
+            label: Text(
+              jamDipilih == null
+                  ? 'Pilih jam servis'
+                  : jamDipilih!.format(context),
+            ),
+          ),
+          const SizedBox(height: 25),
+          const Text(
+            'Ringkasan Layanan',
+            style: TextStyle(
+              color: warnaEmas,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...widget.layanan.map(
+            (item) => _barisData(
+              item.nama,
+              formatRupiah(item.harga),
+            ),
+          ),
+          const Divider(height: 30, color: Colors.white24),
+          _barisData(
+            'Total pembayaran',
+            formatRupiah(totalHarga),
+            tebal: true,
+          ),
+          const SizedBox(height: 25),
+          TombolUtama(
+            teks: sedangMenyimpan
+                ? 'MENYIMPAN...'
+                : 'KONFIRMASI BOOKING',
+            onPressed: sedangMenyimpan ? null : simpanBooking,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _barisData(
+    String kiri,
+    String kanan, {
+    bool tebal = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              kiri,
+              style: TextStyle(
+                color: tebal ? warnaPutih : warnaAbu,
+                fontWeight: tebal ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            kanan,
+            style: TextStyle(
+              color: tebal ? warnaEmas : warnaPutih,
+              fontWeight: tebal ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
+
 // ============================================================
-// HALAMAN 5: BOOKING BERHASIL
+// BOOKING BERHASIL
 // ============================================================
 
 class SuccessPage extends StatelessWidget {
-  final String namaPelanggan;
+  final String nama;
+  final String telepon;
+  final int total;
+  final String bookingId;
+
   final String jenisMotor;
+  final String nomorPolisi;
   final String tanggal;
   final String jam;
-  final String catatan;
-  final List<ServiceItem> pilihan;
+  final List<ServiceItem> layanan;
 
   const SuccessPage({
     super.key,
-    required this.namaPelanggan,
+    required this.nama,
+    required this.telepon,
+    required this.total,
+    required this.bookingId,
     required this.jenisMotor,
+    required this.nomorPolisi,
     required this.tanggal,
     required this.jam,
-    required this.catatan,
-    required this.pilihan,
+    required this.layanan,
   });
-
-  int get totalHarga {
-    return pilihan.fold(
-      0,
-      (total, item) => total + item.harga,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const BrandHeader(),
-        toolbarHeight: 75,
         automaticallyImplyLeading: false,
+        backgroundColor: warnaLatar,
+        title: const Text(
+          'Detail Booking',
+          style: TextStyle(color: warnaEmas),
+        ),
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
-              child: Column(
-                children: [
-                  Container(
-                    width: 82,
-                    height: 82,
-                    decoration: BoxDecoration(
-                      color: warnaEmas.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check_circle,
-                      color: warnaEmas,
-                      size: 54,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Booking Berhasil!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: warnaTeks,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Terima kasih telah memilih Bintang Service.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: warnaSekunder,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 550),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(
+                  Icons.check_circle_outline,
+                  color: warnaHijau,
+                  size: 80,
+                ),
+                const SizedBox(height: 15),
 
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: warnaKartu,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: warnaGaris),
+                const Text(
+                  'Booking Berhasil!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  'Terima kasih, $nama. Pemesanan servis Anda telah berhasil dikirim.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: warnaAbu,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                // NOMOR BOOKING
+                _kartuBagian(
+                  judul: 'Informasi Booking',
+                  ikon: Icons.receipt_long,
+                  isi: [
+                    _barisDataStatic(
+                      'Nomor booking',
+                      bookingId,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'RINGKASAN BOOKING',
-                          style: TextStyle(
+                    _barisDataStatic(
+                      'Nama pelanggan',
+                      nama,
+                    ),
+                    _barisDataStatic(
+                      'Nomor telepon',
+                      telepon,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 15),
+
+                // DATA KENDARAAN
+                _kartuBagian(
+                  judul: 'Data Kendaraan',
+                  ikon: Icons.two_wheeler,
+                  isi: [
+                    _barisDataStatic(
+                      'Jenis / tipe motor',
+                      jenisMotor,
+                    ),
+                    _barisDataStatic(
+                      'Nomor polisi',
+                      nomorPolisi,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 15),
+
+                // JADWAL SERVIS
+                _kartuBagian(
+                  judul: 'Jadwal Servis',
+                  ikon: Icons.calendar_month,
+                  isi: [
+                    _barisDataStatic(
+                      'Tanggal servis',
+                      tanggal,
+                    ),
+                    _barisDataStatic(
+                      'Jam servis',
+                      jam,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 15),
+
+                // RINCIAN LAYANAN
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: warnaKartu,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.white12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.build_circle_outlined,
                             color: warnaEmas,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1,
                           ),
-                        ),
-                        const SizedBox(height: 18),
-
-                        SummaryRow(
-                          label: 'Nama',
-                          value: namaPelanggan,
-                        ),
-                        SummaryRow(
-                          label: 'Jenis motor',
-                          value: jenisMotor,
-                        ),
-                        SummaryRow(
-                          label: 'Tanggal',
-                          value: tanggal,
-                        ),
-                        SummaryRow(
-                          label: 'Jam',
-                          value: '$jam WIB',
-                        ),
-
-                        const Divider(
-                          height: 30,
-                          color: warnaGaris,
-                        ),
-
-                        const Text(
-                          'Pekerjaan dipilih',
-                          style: TextStyle(
-                            color: warnaTeks,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        ...pilihan.map(
-                          (item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.check,
-                                  size: 18,
-                                  color: warnaEmas,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    item.nama,
-                                    style: const TextStyle(
-                                      color: warnaTeks,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  rupiah(item.harga),
-                                  style: const TextStyle(
-                                    color: warnaEmas,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        if (catatan.isNotEmpty) ...[
-                          const Divider(color: warnaGaris),
-                          const Text(
-                            'Catatan',
-                            style: TextStyle(
-                              color: warnaSekunder,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
+                          SizedBox(width: 10),
                           Text(
-                            catatan,
-                            style: const TextStyle(
-                              color: warnaTeks,
+                            'Rincian Layanan',
+                            style: TextStyle(
+                              color: warnaEmas,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
+                      ),
 
-                        const Divider(
-                          height: 30,
-                          color: warnaGaris,
-                        ),
+                      const SizedBox(height: 15),
 
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'TOTAL BIAYA',
-                                style: TextStyle(
-                                  color: warnaTeks,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              rupiah(totalHarga),
-                              style: const TextStyle(
-                                color: warnaEmas,
-                                fontSize: 23,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      ...layanan.map(
+                        (item) => _barisDataStatic(
+                          item.nama,
+                          formatRupiah(item.harga),
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  const SizedBox(height: 24),
-                  PrimaryButton(
-                    teks: 'Kembali ke Beranda',
-                    ikon: Icons.home_outlined,
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => HomePage(
-                            namaPelanggan: namaPelanggan,
-                          ),
+                      const Divider(
+                        height: 30,
+                        color: Colors.white24,
+                      ),
+
+                      _barisDataStatic(
+                        'Total pembayaran',
+                        formatRupiah(total),
+                        tebal: true,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                TombolUtama(
+                  teks: 'KEMBALI KE BERANDA',
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HomePage(
+                          nama: nama,
+                          telepon: telepon,
                         ),
-                        (route) => false,
-                      );
-                    },
+                      ),
+                      (route) => false,
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 15),
+
+                const Text(
+                  'Simpan informasi booking ini sebagai bukti pemesanan servis Anda.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: warnaAbu,
+                    fontSize: 12,
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Bintang Service',
-                    style: TextStyle(
-                      color: warnaEmas,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
-}
 
-class SummaryRow extends StatelessWidget {
-  final String label;
-  final String value;
+  Widget _kartuBagian({
+    required String judul,
+    required IconData ikon,
+    required List<Widget> isi,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: warnaKartu,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(ikon, color: warnaEmas),
+              const SizedBox(width: 10),
+              Text(
+                judul,
+                style: const TextStyle(
+                  color: warnaEmas,
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          ...isi,
+        ],
+      ),
+    );
+  }
 
-  const SummaryRow({
-    super.key,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _barisDataStatic(
+    String kiri,
+    String kanan, {
+    bool tebal = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 105,
+          Expanded(
+            flex: 4,
             child: Text(
-              label,
-              style: const TextStyle(
-                color: warnaSekunder,
+              kiri,
+              style: TextStyle(
+                color: tebal ? warnaPutih : warnaAbu,
+                fontWeight:
+                    tebal ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ),
-          const Text(
-            ': ',
-            style: TextStyle(color: warnaSekunder),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 5,
+            child: Text(
+              kanan,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: tebal ? warnaEmas : warnaPutih,
+                fontWeight:
+                    tebal ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// RIWAYAT BOOKING
+// ============================================================
+
+class RiwayatBookingPage extends StatefulWidget {
+  final String telepon;
+
+  const RiwayatBookingPage({
+    super.key,
+    required this.telepon,
+  });
+
+  @override
+  State<RiwayatBookingPage> createState() =>
+      _RiwayatBookingPageState();
+}
+
+class _RiwayatBookingPageState extends State<RiwayatBookingPage> {
+  final ApiService api = ApiService();
+
+  late Future<List<Map<String, dynamic>>> futureRiwayat;
+
+  @override
+  void initState() {
+    super.initState();
+    futureRiwayat = api.getBookingHistory(phone: widget.telepon);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riwayat Booking'),
+        backgroundColor: warnaLatar,
+      ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: futureRiwayat,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: warnaEmas),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  snapshot.error.toString(),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          final data = snapshot.data ?? [];
+
+          if (data.isEmpty) {
+            return const Center(
+              child: Text('Belum ada riwayat booking.'),
+            );
+          }
+
+          final Map<String, List<Map<String, dynamic>>> kelompok = {};
+
+          for (final item in data) {
+            final id = item['booking_id'].toString();
+            kelompok.putIfAbsent(id, () => []);
+            kelompok[id]!.add(item);
+          }
+
+          return ListView(
+            padding: const EdgeInsets.all(18),
+            children: kelompok.entries.map((entry) {
+              final detail = entry.value;
+              final pertama = detail.first;
+
+              int total = 0;
+
+              for (final item in detail) {
+                final harga = ServiceItem.bacaHarga(item['price']);
+
+                final jumlah =
+                    int.tryParse(item['quantity']?.toString() ?? '1') ??
+                        1;
+
+                total += harga * jumlah;
+              }
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.all(17),
+                decoration: BoxDecoration(
+                  color: warnaKartu,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Booking #${entry.key}',
+                      style: const TextStyle(
+                        color: warnaEmas,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '${pertama['motorcycle_type'] ?? '-'}'
+                      ' • ${pertama['motorcycle_number'] ?? '-'}',
+                      style: const TextStyle(color: warnaAbu),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${pertama['booking_date'] ?? '-'}'
+                      ' • ${pertama['booking_time'] ?? '-'}',
+                      style: const TextStyle(color: warnaAbu),
+                    ),
+                    const Divider(height: 25, color: Colors.white24),
+                    ...detail.map(
+                      (item) => _barisRiwayat(
+                        item['service_name']?.toString() ?? '-',
+                        formatRupiah(
+                          ServiceItem.bacaHarga(item['price']),
+                        ),
+                      ),
+                    ),
+                    const Divider(height: 25, color: Colors.white24),
+                    _barisRiwayat(
+                      'Total',
+                      formatRupiah(total),
+                      tebal: true,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Status: ${pertama['status'] ?? 'Menunggu'}',
+                      style: const TextStyle(color: warnaEmas),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _barisRiwayat(
+    String kiri,
+    String kanan, {
+    bool tebal = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           Expanded(
             child: Text(
-              value,
-              style: const TextStyle(
-                color: warnaTeks,
-                fontWeight: FontWeight.w500,
+              kiri,
+              style: TextStyle(
+                color: tebal ? warnaPutih : warnaAbu,
+                fontWeight: tebal ? FontWeight.bold : FontWeight.normal,
               ),
+            ),
+          ),
+          Text(
+            kanan,
+            style: TextStyle(
+              color: tebal ? warnaEmas : warnaPutih,
+              fontWeight: tebal ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ],
