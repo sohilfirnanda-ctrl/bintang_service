@@ -76,7 +76,7 @@ class Booking {
       plateNumber: asString(json['plate_number']),
       bookingDate: asString(json['booking_date']),
       bookingTime: asString(json['booking_time']),
-      complaint: complaint == null ? null : complaint.toString(),
+      complaint: complaint?.toString(),
       status: asString(json['status']),
       totalPrice: asInt(json['total_price']),
       details: rawDetails is List
